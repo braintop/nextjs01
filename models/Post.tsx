@@ -28,4 +28,6 @@ const postSchema = new Schema(
     { timestamps: true }
 );
 
-export default mongoose.model("Post", postSchema);
+//export default mongoose.model("Post", postSchema);
+const Post = mongoose.models.post || mongoose.model("post", postSchema);
+export default Post;

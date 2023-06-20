@@ -4,12 +4,15 @@ import styles from "./page.module.css";
 import Image from "next/image";
 interface Post {
     userId: number;
-    id: number;
+    _id: number;
     title: string;
-    body: string;
+    desc: string;
+    img: string;
 }
 async function getData() {
-    const res = await fetch("http://localhost:3000/api/post");
+    const res = await fetch("http://localhost:3000/api/posts", {
+        next: { revalidate: 60 },
+    });
     if (!res.ok) {
         throw new Error("failed ti fetch data");
     }
@@ -17,19 +20,20 @@ async function getData() {
 }
 export default async function Blog() {
     const data = await getData();
+    console.log(data);
     return (
         <div className={styles.mainContainer}>
             {data.map((item: Post) => {
                 return (
                     <Link
-                        href="/blog/1"
+                        href={`/blog/${item._id}`}
                         className={styles.container}
-                        key={item.id}
+                        key={item._id}
                     >
                         <div className={styles.imageContainer}>
                             <Image
-                                src="https://images.pexels.com/photos/733853/pexels-photo-733853.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                                alt="braintop"
+                                src={item.img}
+                                alt="appschool"
                                 width={400}
                                 height={250}
                                 className={styles.image}
@@ -37,7 +41,7 @@ export default async function Blog() {
                         </div>
                         <div className={styles.content}>
                             <h1 className={styles.title}>{item.title}</h1>
-                            <p className={styles.desc}>{item.body}</p>
+                            <p className={styles.desc}>{item.desc}</p>
                         </div>
                     </Link>
                 );
